@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quizzler/quiz_brain.dart';
 
 void main() => runApp(Quizzler());
 
@@ -25,6 +26,10 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
+  List<Icon> scoreKeeper = [];
+
+  QuizBrain quizBrain = QuizBrain();
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -36,14 +41,7 @@ class _QuizPageState extends State<QuizPage> {
           child: Padding(
             padding: EdgeInsets.all(10.0),
             child: Center(
-              child: Text(
-                'This is where the question text will go.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 25.0,
-                  color: Colors.white,
-                ),
-              ),
+              child: showQuestion(),
             ),
           ),
         ),
@@ -62,6 +60,16 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked true.
+                setState(() {
+                  //scoreKeeper.clear();
+                  //if (questionsList[questionNumber].answer == true) {
+                  print(
+                      "getCurrentQuestion() ${quizBrain.getCurrentQuestion()}");
+                  showScore(true);
+
+                  quizBrain.nextQuestion();
+                  showQuestion();
+                });
               },
             ),
           ),
@@ -80,13 +88,56 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked false.
+                setState(() {
+                  //scoreKeeper.clear();
+                  print(
+                      "getCurrentQuestion() ${quizBrain.getCurrentQuestion()}");
+                  showScore(false);
+                  quizBrain.nextQuestion();
+                  showQuestion();
+                  /* if (questionNumber < quizBrain.getLength() - 1) {
+                    questionNumber++;
+                    print(
+                        "setState $questionNumber ${quizBrain.getAnswer(questionNumber)}");
+                    showQuestion(questionNumber);
+                  }*/
+                });
               },
             ),
           ),
         ),
         //TODO: Add a Row here as your score keeper
+        Row(
+          children: scoreKeeper,
+        )
       ],
     );
+  }
+
+  Text showQuestion() {
+    //print(questionNum);
+    return Text(
+      quizBrain.getQuestionText(),
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontSize: 25.0,
+        color: Colors.white,
+      ),
+    );
+  }
+
+  Icon showScore(userPickedAnswer) {
+    if (quizBrain.getAnswer() == userPickedAnswer) {
+      scoreKeeper.add(Icon(
+        Icons.check,
+        color: Colors.green,
+      ));
+    } else {
+      scoreKeeper.add(Icon(
+        Icons.close,
+        color: Colors.red,
+      ));
+    }
   }
 }
 
